@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    .box {}
+    .clearfix::after {
+      content: '';
+      display: block;
+      clear: both;
+      height: 0;
+      font-size: 0;
+      visibility: hidden;
+    }
+    .center {
+      float: left;
+      width: calc(100% - 200px);
+      margin: 0 100px;
+      /*box-sizing: border-box;*/
+      /*width: 100%;*/
+      /*padding: 0 100px;*/
+      height: 200px;
+      background-color: brown;
+    }
+    .main {
+      padding: 0 100px;
+      height: 200px;
+    }
+    .left {
+      float: left;
+      width: 100px;
+      height: 200px;
+      margin-left: -100%;
+      background-color: blueviolet;
+    }
+    .right {
+      float: left;
+      width: 100px;
+      height: 200px;
+      margin-left: -100px;
+      background-color: antiquewhite;
+    }
+  </style>
+</head>
+<body>
+<div class="box clearfix">
+  <div class="center">
+    <!--<div class="main"></div>-->
+  </div>
+  <div class="left"></div>
+  <div class="right"></div>
+</div>
+</body>
+</html>
