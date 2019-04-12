@@ -1,13 +1,23 @@
 <template>
-<div>1</div>
+<div class="box">
+  <chart-two/>
+</div>
 </template>
 
 <script>
+import chartTwo from './charts/chart-two'
 export default {
-  name: 'application'
+  name: 'application',
+  components: {
+    // 'component-a': componentA
+    'chart-two': chartTwo
+  }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .box {
+    height: calc(100vh - 80px);
+    overflow-y: scroll;
+  }
 </style>

@@ -20,9 +20,10 @@ app.use(cookieParser('sessionUserId'))
 app.use(session({
   secret: 'sessionUserId',
   resave: false,
+  sameSite: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: 1000 * 60 * 1
+    maxAge: 1000 * 60 * 60
   }
 }))
 const connection = mysql.createConnection({
@@ -46,23 +47,104 @@ connection.connect()
 // })
 // const sql_user = 'Select * from user where account=?'
 app.post('/api/user', (req, res) => {
-  console.log(req.session)
+  console.log(req)
   console.log(123)
   connection.query('Select * from user', function (err, result) {
     if (err) {
       console.log(err)
       return
     }
-    req.session.name = '小明'
-    res.cookie('add', 'adds', {maxAge: 9000 * 10, path: '/'})
+    res.send({
+      status: 1,
+      data: result
+    })
+  })
+})
+app.post('/api/member', (req, res) => {
+  console.log(req.body)
+  const body = req.body
+  let sql = 'Select DATE_FORMAT(date,"%Y-%m-%d") as date,name,tel,sex,age,type,car_type,car_brand,address from member where '
+  let params = []
+  for (let i in body) {
+    if (body[i] !== '') {
+      sql += `${i}=?and `
+      params.push(body[i])
+    }
+  }
+  if (sql.slice(-6) === ' where') {
+    sql = 'Select DATE_FORMAT(date,"%Y-%m-%d") as date,name,tel,sex,age,type,car_type,car_brand,address from member'
+  } else {
+    sql = sql.slice(0, -4)
+  }
 
-    res.send(result)
+  console.log(sql)
+  console.log(params)
+
+  connection.query(sql, params, function (err, result) {
+    if (err) {
+      console.log(err)
+      res.send({
+        status: 0
+      })
+      return
+    }
+    res.send({
+      'status': 1,
+      data: result
+    })
+  })
+})
+app.get('/api/getuser', (req, res) => {
+  const params = req.query.account
+  console.log(params)
+  connection.query('select * from user where account=? ', params, function (err, result) {
+    if (err) {
+      console.log(err)
+      return
+    }
+    res.send({
+      status: 1,
+      data: result
+    })
+  })
+})
+app.post('/api/adduser', (req, res) => {
+  console.log(req.body)
+  const params = Object.values(req.body)
+  connection.query('insert into user(account,password,type) values(?,?,?)', params, function (err, result) {
+    if (err) {
+      console.log(err)
+      res.send({
+        status: 0
+      })
+      return
+    }
+    res.send({
+      'status': 1
+    })
+  })
+})
+app.post('/api/edituser', (req, res) => {
+  console.log(req.body)
+  const params = Object.values(req.body)
+  console.log(params)
+  connection.query('update user set account=?,password=?,type=? where id=?', params, function (err, result) {
+    if (err) {
+      console.log(err)
+      res.send({
+        status: 0
+      })
+      return
+    }
+    res.send({
+      'status': 1
+    })
   })
 })
 app.get('/api/deluser', (req, res) => {
-  const params = req.query.account
+  const params = req.query.id
   console.log(params)
-  connection.query('delete from user where account=? ', params, function (err, result) {
+  connection.query('delete from user where id=? ', params, function (err, result) {
     if (err) {
       console.log(err)
       return
