@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import util from '../util/util'
+// import util from '../util/util'
 import doCookie from '../util/cookie'
 export default {
   name: 'login',
@@ -61,36 +61,39 @@ export default {
         this.userErr = true
         this.errMessage = '请输入密码'
       } else {
-        this.http.post(this.ports.login, {
-          'account': this.formAccount.account,
-          'password': this.formAccount.password
-        }).then(res => {
-          if (res.data.status === 1) {
-            // 本地缓存法
-            // util.removeLocalStorage('checked')
-            // if (this.checked) {
-            //   util.setLocalStorage({'checked': true})
-            // } else {
-            //   util.setLocalStorage({'checked': false})
-            // }
-            // util.setLocalStorage({user: this.formAccount})
-            // this.$router.push({path: '/index'})
-
-            if (this.checked) {
-              doCookie.setCookie('account', this.formAccount.account, 7)
-              doCookie.setCookie('password', this.formAccount.password, 7)
-            }
-            this.$store.commit('addAccount', this.formAccount)
-            util.setLocalStorage({user: this.formAccount})
-            this.$router.push({path: '/index'})
-          } else if (res.data.status === -1) {
-            this.userErr = true
-            this.errMessage = '没有该用户'
-          } else if (res.data.status === 0) {
-            this.userErr = true
-            this.errMessage = '密码错误'
-          }
-        })
+        doCookie.setCookie('account', this.formAccount.account, 7)
+        doCookie.setCookie('password', this.formAccount.password, 7)
+        this.$router.push({path: '/index'})
+        // this.http.post(this.ports.login, {
+        //   'account': this.formAccount.account,
+        //   'password': this.formAccount.password
+        // }).then(res => {
+        //   if (res.data.status === 1) {
+        //     // 本地缓存法
+        //     // util.removeLocalStorage('checked')
+        //     // if (this.checked) {
+        //     //   util.setLocalStorage({'checked': true})
+        //     // } else {
+        //     //   util.setLocalStorage({'checked': false})
+        //     // }
+        //     // util.setLocalStorage({user: this.formAccount})
+        //     // this.$router.push({path: '/index'})
+        //
+        //     if (this.checked) {
+        //       doCookie.setCookie('account', this.formAccount.account, 7)
+        //       doCookie.setCookie('password', this.formAccount.password, 7)
+        //     }
+        //     this.$store.commit('addAccount', this.formAccount)
+        //     util.setLocalStorage({user: this.formAccount})
+        //     this.$router.push({path: '/index'})
+        //   } else if (res.data.status === -1) {
+        //     this.userErr = true
+        //     this.errMessage = '没有该用户'
+        //   } else if (res.data.status === 0) {
+        //     this.userErr = true
+        //     this.errMessage = '密码错误'
+        //   }
+        // })
       }
     }
   }
