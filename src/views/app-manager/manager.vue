@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 40px 30px 0">
+  <div style="margin: 40px 30px 0;max-height: 500px;overflow-y: scroll;">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="姓名">
         <el-input v-model="formInline.name" placeholder="会员姓名"></el-input>
@@ -14,10 +14,10 @@
           <el-option label="女" value="女"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="车辆类型">
-        <el-select v-model="formInline.bus" placeholder="车辆类型">
+      <el-form-item label="会员类型">
+        <el-select v-model="formInline.type" placeholder="会员类型">
           <el-option label="无" value=""></el-option>
-          <template v-for="(item,index) in carBrandData" >
+          <template v-for="(item,index) in memberType" >
             <el-option :label="item" :value="item" :key="index"></el-option>
           </template>
         </el-select>
@@ -65,14 +65,8 @@
       >
       </el-table-column>
       <el-table-column
-        prop="car_type"
-        label="车辆类别"
-        width="160"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="car_brand"
-        label="车辆品牌"
+        prop="source"
+        label="会员来源"
         width="160"
       >
       </el-table-column>
@@ -92,13 +86,14 @@ export default {
   },
   data () {
     return {
-      carTypeData: ['认证车主', '实名车主', '意向车主', '基础会员'],
-      carBrandData: ['小型车', 'SUV', '大型车', '跑车'],
+      // carTypeData: ['认证车主', '实名车主', '意向车主', '基础会员'],
+      // carBrandData: ['小型车', 'SUV', '大型车', '跑车'],
+      memberType: ['认证会员', '实名会员', '意向会员', '基础会员'],
       formInline: {
         name: '',
         tel: '',
         sex: '',
-        bus: ''
+        type: ''
       },
       tableData: [{
         date: '2016-05-02',
@@ -153,7 +148,7 @@ export default {
         name: this.formInline.name,
         tel: this.formInline.tel,
         sex: this.formInline.sex,
-        car_type: this.formInline.bus
+        type: this.formInline.type
       }).then(res => {
         console.log(res)
         this.members = res.data.data

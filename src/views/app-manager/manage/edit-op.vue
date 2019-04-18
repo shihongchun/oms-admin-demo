@@ -1,6 +1,7 @@
 <template>
   <div class="table">
     <el-table
+      v-if="type === 1"
       :data="users"
       style="width: 100%">
       <el-table-column
@@ -28,6 +29,23 @@
         </template>
       </el-table-column>
     </el-table>
+    <div v-if="type === 2">
+      <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="账号" prop="account">
+          <el-input v-model="ruleForm2.account" class="small"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员类别" prop="type">
+          <span>管理员</span>
+        </el-form-item>
+        <el-form-item label="密码" prop="pass">
+          <el-input type="password" v-model="ruleForm2.pass" autocomplete="off" class="small"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input type="password" v-model="ruleForm2.checkPass" autocomplete="off" class="small"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" @click="selfSubmitForm('ruleForm2')">提交</el-button>
+    </div>
     <el-dialog title="编辑管理人员信息" :visible.sync="dialogFormVisible">
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-form-item label="账号" prop="account">
@@ -59,6 +77,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'edit-op',
   data () {
@@ -90,6 +109,7 @@ export default {
     }
     return {
       users: [],
+      type: 2,
       dialogFormVisible: false,
       options: [
         {
@@ -99,17 +119,13 @@ export default {
         {
           value: 2,
           label: '管理员'
-        },
-        {
-          value: 3,
-          label: '运营人员'
         }
       ],
       ruleForm2: {
         account: '',
         pass: '',
         checkPass: '',
-        type: 3
+        type: 2
       },
       rules2: {
         account: [
@@ -130,8 +146,21 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'getUser',
+      'getUserId'
+    ])
+  },
   mounted () {
-    this.getUSer()
+    const type = this.getUser[0].type
+    this.type = type
+    if (type === 1) {
+      this.getUSer()
+    } else {
+      this.ruleForm2.account = this.getUser[0].account
+      this.ruleForm2.id = this.getUser[0].id
+    }
     console.log(JSON.stringify(this.$store.state) + 'ads')
   },
   methods: {
@@ -155,6 +184,35 @@ export default {
         this.getUSer()
       }).catch(err => {
         console.log(err)
+      })
+    },
+    selfSubmitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(this.ruleForm2.account)
+          this.http.post(this.ports.editUser, {
+            'account': this.ruleForm2.account,
+            'password': this.ruleForm2.pass,
+            'type': this.ruleForm2.type,
+            'id': this.ruleForm2.id
+          }).then(res => {
+            console.log(res)
+            if (res.data.status) {
+              this.$message({
+                message: '恭喜你，修改成功',
+                type: 'success'
+              })
+            } else {
+              this.$message({
+                message: '抱歉，修改失败',
+                type: 'error'
+              })
+            }
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     submitForm (formName) {

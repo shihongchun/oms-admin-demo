@@ -60,10 +60,63 @@ app.post('/api/user', (req, res) => {
     })
   })
 })
+app.get('/api/countmember', (req, res) => {
+  connection.query('SELECT type,count(type) as count from member group by type', (err, result) => {
+    if (err) {
+      console.log(err)
+      return
+    }
+    res.send({
+      status: 1,
+      data: result
+    })
+  })
+})
+app.get('/api/getactivity', (req, res) => {
+  let sql = `select activity_name,issuer_name,max_number,activity_range,activity_kind,activity_des,activity_type,activity_id,DATE_FORMAT(activity_date, '%Y-%m-%d') as date from activity`
+  connection.query(sql, (err, result) => {
+    if (err) {
+      return
+    }
+    res.send({
+      status: 1,
+      data: result
+    })
+  })
+})
+
+app.get('/api/getaddcount', (req, res) => {
+  let newDate = (new Date().getTime() - 7 * 24 * 3600 * 1000) / 1000
+  let sql = `select count(id) as count,source,DATE_FORMAT(add_time, '%Y%m%d') as date from member where unix_timestamp(add_time) > ${newDate} group by DATE_FORMAT(add_time, '%Y%m%d'),source`
+  connection.query(sql, (err, result) => {
+    if (err) {
+      return
+    }
+    res.send({
+      status: 1,
+      data: result
+    })
+  })
+})
+app.get('/api/getreacent', (req, res) => {
+  let newDate = (new Date().getTime() - 7 * 24 * 3600 * 1000) / 1000
+  let sql = `select count(id) as count,type,DATE_FORMAT(add_time, '%Y%m%d') as date from member where unix_timestamp(add_time) > ${newDate} group by DATE_FORMAT(add_time, '%Y%m%d'),type`
+  //   const sql = `SELECT unix_timestamp(add_time) as date,type,count(type) as count from member where unix_timestamp(add_time) > ${date} and DATE_FORMAT(add_time, '%Y%m%d') in( select DATE_FORMAT(add_time, '%Y%m%d') from member where unix_timestamp(add_time) > ${date} group by id)
+  // group by id`
+  connection.query(sql, (err, result) => {
+    if (err) {
+      return
+    }
+    res.send({
+      status: 1,
+      data: result
+    })
+  })
+})
 app.post('/api/member', (req, res) => {
   console.log(req.body)
   const body = req.body
-  let sql = 'Select DATE_FORMAT(date,"%Y-%m-%d") as date,name,tel,sex,age,type,car_type,car_brand,address from member where '
+  let sql = 'Select DATE_FORMAT(add_time,"%Y-%m-%d") as date,name,tel,sex,age,type,source,address from member where '
   let params = []
   for (let i in body) {
     if (body[i] !== '') {
@@ -72,7 +125,7 @@ app.post('/api/member', (req, res) => {
     }
   }
   if (sql.slice(-6) === ' where') {
-    sql = 'Select DATE_FORMAT(date,"%Y-%m-%d") as date,name,tel,sex,age,type,car_type,car_brand,address from member'
+    sql = 'Select DATE_FORMAT(add_time,"%Y-%m-%d") as date,name,tel,sex,age,type,source,address from member'
   } else {
     sql = sql.slice(0, -4)
   }
@@ -105,6 +158,22 @@ app.get('/api/getuser', (req, res) => {
     res.send({
       status: 1,
       data: result
+    })
+  })
+})
+app.post('/api/addactivity', (req, res) => {
+  console.log(req.body)
+  const params = Object.values(req.body)
+  connection.query('insert into activity(activity_name,issuer_name,max_number,activity_range,activity_date,activity_kind,activity_des) values(?,?,?,?,?,?,?)', params, function (err, result) {
+    if (err) {
+      console.log(err)
+      res.send({
+        status: 0
+      })
+      return
+    }
+    res.send({
+      'status': 1
     })
   })
 })

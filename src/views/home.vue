@@ -67,6 +67,7 @@
 
 <script>
 import Header from './content/header'
+import util from '../util/util'
 export default {
   name: 'home',
   data () {
@@ -78,6 +79,11 @@ export default {
     Header
   },
   mounted () {
+    const account = JSON.parse(util.getLocalStorage('user')).account
+    console.log('account:' + account)
+    this.$store.commit('addAccount', account)
+    this.$store.dispatch('addUser')
+    this.$router.push('/index')
     console.log(window.location.href.split('8080/')[1])
     this.activeNav = window.location.href.split('8080/')[1]
   },

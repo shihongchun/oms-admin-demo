@@ -2,8 +2,8 @@
   <el-row class="table-box">
     <el-col :span="24" id="chart_a" style="height: 400px;">
     </el-col>
-    <el-col :span="24" id="chart_b" style="height: 400px;">
-    </el-col>
+    <!--<el-col :span="24" id="chart_b" style="height: 400px;">-->
+    <!--</el-col>-->
   </el-row>
 </template>
 
@@ -13,6 +13,12 @@ export default {
   name: 'chart-two',
   data () {
     return {
+      chartData: {
+        '线下地推': [],
+        '代理样本': [],
+        '微信会员推荐': [],
+        'pc会员推荐': []
+      },
       map:
           {
             'arr6': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -29,25 +35,48 @@ export default {
     }
   },
   mounted () {
-    this.drawLine()
+    this.http.get(this.ports.getAddCount).then((res) => {
+      if (res.data.status) {
+        let data = res.data.data
+        let date = new Date()
+        let newData = {}
+        for (let i = 0; i < 7; i++) {
+          let aa = new Date(date.getTime() - i * 24 * 3600 * 1000)
+          let newDate = this.moment(aa)
+          console.log(newDate)
+          newData[newDate] = {}
+          data.forEach((item) => {
+            if (item.date === newDate) {
+              newData[newDate][item.source] = item.count
+            }
+          })
+        }
+        for (let i in this.chartData) {
+          for (let j in newData) {
+            if (newData[j][i]) {
+              this.chartData[i].push(newData[j][i])
+            } else {
+              this.chartData[i].push(0)
+            }
+          }
+        }
+        console.log('data:' + JSON.stringify(this.chartData))
+        this.drawLine()
+      }
+    })
   },
   methods: {
+    moment (newDate) {
+      let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate()).toString()
+      return date
+    },
     drawLine () {
       let chartA = echarts.init(document.getElementById('chart_a'))
-      let chartB = echarts.init(document.getElementById('chart_b'))
-      var arr11 = this.map.arr11 // pc正常注册
-      var arr12 = this.map.arr12 // pc推荐
-      var arr1 = this.map.arr1 // 代理样本
-      var arr3 = this.map.arr3 // 微信推荐
-      var arr4 = this.map.arr4 // 微信注册
-      var arr5 = this.map.arr5 // 媒体推广
-      var arr6 = this.map.arr6 // 线下代理
-      var arr7 = this.map.arr7 // App推广
-      var dataX = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12']
+      var dataX = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
       // 构图
       var option1 = {
         title: {
-          text: '推荐会员变化趋势',
+          text: '会员增长变化趋势',
           left: 50
         },
         color: ['#fc8675', '#4acacb', '#5ab6df', '#6a8abe'],
@@ -86,7 +115,7 @@ export default {
           areaStyle: {
             normal: {}
           },
-          data: arr6
+          data: this.chartData['线下地推']
         },
         {
           name: '代理样本',
@@ -95,7 +124,7 @@ export default {
           areaStyle: {
             normal: {}
           },
-          data: arr1
+          data: this.chartData['代理样本']
         },
         {
           name: '微信会员推荐',
@@ -104,7 +133,7 @@ export default {
           areaStyle: {
             normal: {}
           },
-          data: arr3
+          data: this.chartData['微信会员推荐']
         },
         {
           name: 'PC会员推荐',
@@ -113,84 +142,84 @@ export default {
           areaStyle: {
             normal: {}
           },
-          data: arr12
+          data: this.chartData['PC会员推荐']
         }
         ]
       }
       chartA.setOption(option1)
-      var option2 = {
-        title: {
-          text: '自主会员变化趋势',
-          left: 50
-        },
-        color: ['#fc8675', '#4acacb', '#5ab6df', '#6a8abe'],
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#6a7985'
-            }
-          }
-        },
-        legend: {
-          right: 55,
-          data: ['微信自主注册', 'PC自主注册', '媒体推广', 'APP推广']
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: [{
-          type: 'category',
-          boundaryGap: false,
-          data: dataX
-        }],
-        yAxis: [{
-          minInterval: 1,
-          type: 'value'
-        }],
-        series: [{
-          name: '微信自主注册',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {
-            normal: {}
-          },
-          data: arr4
-        },
-        {
-          name: 'PC自主注册',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {
-            normal: {}
-          },
-          data: arr11
-        },
-        {
-          name: '媒体推广',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {
-            normal: {}
-          },
-          data: arr5
-        },
-        {
-          name: 'APP推广',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {
-            normal: {}
-          },
-          data: arr7
-        }
-        ]
-      }
-      chartB.setOption(option2)
+      // var option2 = {
+      //   title: {
+      //     text: '自主会员变化趋势',
+      //     left: 50
+      //   },
+      //   color: ['#fc8675', '#4acacb', '#5ab6df', '#6a8abe'],
+      //   tooltip: {
+      //     trigger: 'axis',
+      //     axisPointer: {
+      //       type: 'cross',
+      //       label: {
+      //         backgroundColor: '#6a7985'
+      //       }
+      //     }
+      //   },
+      //   legend: {
+      //     right: 55,
+      //     data: ['微信自主注册', 'PC自主注册', '媒体推广', 'APP推广']
+      //   },
+      //   grid: {
+      //     left: '3%',
+      //     right: '4%',
+      //     bottom: '3%',
+      //     containLabel: true
+      //   },
+      //   xAxis: [{
+      //     type: 'category',
+      //     boundaryGap: false,
+      //     data: dataX
+      //   }],
+      //   yAxis: [{
+      //     minInterval: 1,
+      //     type: 'value'
+      //   }],
+      //   series: [{
+      //     name: '微信自主注册',
+      //     type: 'line',
+      //     stack: '总量',
+      //     areaStyle: {
+      //       normal: {}
+      //     },
+      //     data: arr4
+      //   },
+      //   {
+      //     name: 'PC自主注册',
+      //     type: 'line',
+      //     stack: '总量',
+      //     areaStyle: {
+      //       normal: {}
+      //     },
+      //     data: arr11
+      //   },
+      //   {
+      //     name: '媒体推广',
+      //     type: 'line',
+      //     stack: '总量',
+      //     areaStyle: {
+      //       normal: {}
+      //     },
+      //     data: arr5
+      //   },
+      //   {
+      //     name: 'APP推广',
+      //     type: 'line',
+      //     stack: '总量',
+      //     areaStyle: {
+      //       normal: {}
+      //     },
+      //     data: arr7
+      //   }
+      //   ]
+      // }
+      // chartB.setOption(option2)
     }
   }
 }

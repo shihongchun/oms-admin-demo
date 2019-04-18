@@ -15,30 +15,83 @@ export default {
   name: 'index',
   data () {
     return {
+      countMember: {
+        '认证会员': 0,
+        '实名会员': 0,
+        '意向会员': 0,
+        '基础会员': 0
+      },
       chartData: {
-        'attestationIncremental': [2, 5, 5, 1, 0, 12, 4, 6, 3, 3, 6, 1, 0, 1, 1, 4, 0, 1, 4, 3, 1, 1, 1, 0, 0, 1, 5040, 4, 1, 0],
-        'intentionIncremental': [5, 3, 1, 1, 0, 30, 6, 11, 4, 3, 1, 1, 4, 1, 0, 5, 0, 1, 0, 1, 3, 2, 1, 1, 1, 1, 4, 12, 16, 3],
-        'autonymIncremental': [6, 4, 5, 4, 2, 38, 12, 23, 9, 3, 1, 0, 1, 0, 0, 12, 3, 0, 2, 0, 4, 0, 1, 2, 3, 1, 145, 13, 18, 0],
-        'timeAxis': ['04-05', '04-04', '04-03', '04-02', '04-01', '03-31', '03-30', '03-29', '03-28', '03-27', '03-26', '03-25', '03-24', '03-23', '03-22', '03-21', '03-20', '03-19', '03-18', '03-17', '03-16', '03-15', '03-14', '03-13', '03-12', '03-11', '03-10', '03-09', '03-08', '03-07'],
-        'baseIncremental': [6, 5, 3, 3, 3, 16, 9, 10, 8, 19, 1, 1, 0, 0, 0, 1, 1, 3, 0, 1, 2, 0, 2, 0, 2, 0, 0, 14, 3, 0]
+        // 'attestationIncremental': [2, 5, 5, 1, 0, 12, 4],
+        // 'intentionIncremental': [5, 3, 1, 1, 0, 30, 6],
+        // 'autonymIncremental': [6, 4, 5, 4, 2, 38, 12],
+        // 'baseIncremental': [6, 5, 3, 3, 3, 16, 0]
+        '意向会员': [],
+        '实名会员': [],
+        '认证会员': [],
+        '基础会员': []
       }
     }
   },
+  created () {
+  },
   mounted () {
-    this.drawLine()
+    this.http.get(this.ports.getMemberCount).then((res) => {
+      if (res.data.status) {
+        for (let it in this.countMember) {
+          res.data.data.forEach((item) => {
+            if (item.type === it) { this.countMember[it] = item.count }
+          })
+        }
+        console.log('this.countMember:' + JSON.stringify(this.countMember))
+        this.drawLineB()
+      }
+    })
+    this.http.get(this.ports.getReacent).then((res) => {
+      if (res.data.status) {
+        let data = res.data.data
+        let date = new Date()
+        let newData = {}
+        for (let i = 0; i < 7; i++) {
+          let aa = new Date(date.getTime() - i * 24 * 3600 * 1000)
+          let newDate = this.moment(aa)
+          console.log(newDate)
+          newData[newDate] = {}
+          data.forEach((item) => {
+            if (item.date === newDate) {
+              newData[newDate][item.type] = item.count
+            }
+          })
+        }
+        for (let i in this.chartData) {
+          for (let j in newData) {
+            if (newData[j][i]) {
+              this.chartData[i].push(newData[j][i])
+            } else {
+              this.chartData[i].push(0)
+            }
+          }
+        }
+        console.log('data:' + JSON.stringify(this.chartData))
+        this.drawLineA()
+      }
+    })
   },
   methods: {
-    drawLine () {
+    moment (newDate) {
+      let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate()).toString()
+      return date
+    },
+    drawLineA () {
       let myChart = echarts.init(document.getElementById('chart_a'))
-      let chartA = echarts.init(document.getElementById('chart'))
-      var linshiData4 = this.chartData.baseIncremental
-      var linshiData3 = this.chartData.intentionIncremental
-      var linshiData2 = this.chartData.autonymIncremental
-      var linshiData1 = this.chartData.attestationIncremental
+      var linshiData4 = this.chartData['基础会员']
+      var linshiData3 = this.chartData['意向会员']
+      var linshiData2 = this.chartData['实名会员']
+      var linshiData1 = this.chartData['认证会员']
       // 绘制图表
       myChart.setOption({
         title: {
-          text: '近30天增量变化',
+          text: '近7天增量变化',
           left: 70
         },
         color: ['#fc8675', '#4acacb', '#5ab6df', '#6a8abe'],
@@ -50,7 +103,7 @@ export default {
         },
         legend: {
           right: 50,
-          data: ['认证车主', '实名车主', '意向车主', '基础会员']
+          data: ['认证会员', '实名会员', '意向会员', '基础会员']
         },
         grid: {
           left: '3%',
@@ -60,10 +113,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9',
-            'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17',
-            'D18', 'D19', 'D20', 'D21', 'D22', 'D23', 'D24', 'D25',
-            'D26', 'D27', 'D28', 'D29', '昨日']
+          data: ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
         }],
         yAxis: [{
           type: 'value',
@@ -71,20 +121,20 @@ export default {
         }],
         series: [
           {
-            name: '认证车主',
+            name: '认证会员',
             type: 'bar',
             barGap: '10%',
             data: linshiData1
           },
           {
-            name: '实名车主',
+            name: '实名会员',
             type: 'bar',
             barGap: '10%',
             stack: '非认证',
             data: linshiData2
           },
           {
-            name: '意向车主',
+            name: '意向会员',
             type: 'bar',
             barGap: '10%',
             stack: '非认证',
@@ -98,6 +148,9 @@ export default {
             data: linshiData4
           }]
       })
+    },
+    drawLineB () {
+      let chartA = echarts.init(document.getElementById('chart'))
       chartA.setOption({
         tooltip: {
           trigger: 'item',
@@ -106,7 +159,7 @@ export default {
         legend: {
           orient: 'vertical',
           x: 'left',
-          data: ['认证车主', '实名车主', '意向车主', '基础会员']
+          data: ['认证会员', '实名会员', '意向会员', '基础会员']
         },
         series: [
           {
@@ -133,10 +186,10 @@ export default {
               }
             },
             data: [
-              {value: 11712, name: '认证车主'},
-              {value: 18110, name: '实名车主'},
-              {value: 22201, name: '意向车主'},
-              {value: 57981, name: '基础会员'}
+              {value: this.countMember['认证会员'], name: '认证会员'},
+              {value: this.countMember['实名会员'], name: '实名会员'},
+              {value: this.countMember['意向会员'], name: '意向会员'},
+              {value: this.countMember['基础会员'], name: '基础会员'}
             ]
           }
         ]

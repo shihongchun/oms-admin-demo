@@ -6,7 +6,6 @@
         {{userName}}<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="changePassword">修改密码</el-dropdown-item>
           <el-dropdown-item command="quit">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -27,15 +26,12 @@ export default {
     this.userName = userName
   },
   methods: {
-    changePassword () {
-    },
     quit () {
       localStorage.removeItem('user')
       this.$router.push({path: '/login'})
     },
     handleCommand (command) {
       switch (command) {
-        case 'changePassword': this.changePassword(); break
         case 'quit': this.quit(); break
       }
     }

@@ -80,7 +80,8 @@ export default {
               doCookie.setCookie('account', this.formAccount.account, 7)
               doCookie.setCookie('password', this.formAccount.password, 7)
             }
-            this.$store.commit('addAccount', this.formAccount)
+            this.$store.commit('addAccount', this.formAccount.account)
+            this.$store.dispatch('addUser')
             util.setLocalStorage({user: this.formAccount})
             this.$router.push({path: '/index'})
           } else if (res.data.status === -1) {
