@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import store from '../store/index'
+// import store from '../store/index'
 import Router from 'vue-router'
 import Login from '../views/login'
 import Home from '../views/home'
@@ -112,23 +112,23 @@ const router = new Router({
     }
   ]
 })
-router.beforeEach((to, from, next) => {
-  // 本地缓存法
-  // let user = JSON.parse(localStorage.getItem('user'))
-  // let checked = JSON.parse(localStorage.getItem('checked'))
-  // if (!user && to.path !== '/login' && !checked) {
-  //   next({path: '/login'})
-  // } else {
-  //   next()
-  // }
-  // cookie法
-  let user = JSON.parse(localStorage.getItem('user'))
-  if (!user && to.path !== '/login') {
-    next({path: '/login'})
-  } else {
-    if (!Object.keys(store.getters.getUser).length) {
-    }
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   // 本地缓存法
+//   // let user = JSON.parse(localStorage.getItem('user'))
+//   // let checked = JSON.parse(localStorage.getItem('checked'))
+//   // if (!user && to.path !== '/login' && !checked) {
+//   //   next({path: '/login'})
+//   // } else {
+//   //   next()
+//   // }
+//   // cookie法
+//   let user = JSON.parse(localStorage.getItem('user'))
+//   if (!user && to.path !== '/login') {
+//     next({path: '/login'})
+//   } else {
+//     if (!Object.keys(store.getters.getUser).length) {
+//     }
+//     next()
+//   }
+// })
 export default router

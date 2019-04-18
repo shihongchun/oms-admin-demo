@@ -27,14 +27,8 @@
       </el-form-item>
     </el-form>
     <el-table
-      :data="members"
+      :data="tableData"
       style="width: 100%">
-      <el-table-column
-        prop="date"
-        label="注册时间"
-        width="160"
-      >
-      </el-table-column>
       <el-table-column
         prop="name"
         label="姓名"
@@ -65,14 +59,31 @@
       >
       </el-table-column>
       <el-table-column
-        prop="source"
-        label="会员来源"
+        prop="date"
+        label="注册时间"
+      >
         width="160"
       >
       </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="car_type"-->
+        <!--label="车辆类别"-->
+        <!--width="160"-->
+      <!--&gt;-->
+      <!--</el-table-column>-->
+      <!--<el-table-column-->
+        <!--prop="car_brand"-->
+        <!--label="车辆品牌"-->
+        <!--width="160"-->
+      <!--&gt;-->
+      <!--</el-table-column>-->
       <el-table-column
         prop="address"
         label="地址">
+      </el-table-column>
+      <el-table-column
+        prop="source"
+        label="来源">
       </el-table-column>
     </el-table>
   </div>
@@ -82,7 +93,7 @@
 export default {
   name: 'manager',
   created () {
-    this.getMember()
+    // this.getMember()
   },
   data () {
     return {
@@ -102,8 +113,9 @@ export default {
         sex: '男',
         age: 18,
         type: '认证车主',
-        carType: '小型车',
-        carBrand: 1,
+        // carType: '小型车',
+        // carBrand: 1,
+        source: 'pc端',
         address: '上海市普陀区金沙江路 1517 弄'
       }, {
         date: '2016-05-02',
@@ -112,8 +124,9 @@ export default {
         sex: '男',
         age: 18,
         type: '认证车主',
-        carType: '小型车',
-        carBrand: 1,
+        // carType: '小型车',
+        // carBrand: 1,
+        source: '微信公众号',
         address: '上海市普陀区金沙江路 1517 弄'
       }, {
         date: '2016-05-02',
@@ -122,8 +135,45 @@ export default {
         sex: '男',
         age: 18,
         type: '实名车主',
-        carType: '小型车',
-        carBrand: 1,
+        // carType: '小型车',
+        // carBrand: 1,
+        source: 'pc端',
+        address: '上海市普陀区金沙江路 1519 弄'
+      },
+      {
+        date: '2016-05-02',
+        name: '王小虎',
+        tel: '17712345678',
+        sex: '男',
+        age: 18,
+        type: '实名车主',
+        // carType: '小型车',
+        // carBrand: 1,
+        source: 'pc端',
+        address: '上海市普陀区金沙江路 1519 弄'
+      },
+      {
+        date: '2016-05-02',
+        name: '王小虎',
+        tel: '17712345678',
+        sex: '男',
+        age: 18,
+        type: '实名车主',
+        // carType: '小型车',
+        // carBrand: 1,
+        source: 'pc端',
+        address: '上海市普陀区金沙江路 1519 弄'
+      },
+      {
+        date: '2016-05-02',
+        name: '王小虎',
+        tel: '17712345678',
+        sex: '男',
+        age: 18,
+        type: '实名车主',
+        // carType: '小型车',
+        // carBrand: 1,
+        source: 'pc端',
         address: '上海市普陀区金沙江路 1519 弄'
       }, {
         date: '2016-05-02',
@@ -132,8 +182,9 @@ export default {
         sex: '男',
         age: 18,
         type: '实名车主',
-        carType: '小型车',
-        carBrand: 1,
+        // carType: '小型车',
+        // carBrand: 1,
+        source: '微信公众号',
         address: '上海市普陀区金沙江路 1516 弄'
       }],
       members: []
