@@ -36,7 +36,7 @@
         label="开启状态"
         width="100"
     >
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-tag
             :type="scope.row.activity_type === 1 ? 'primary' : 'success'"
             close-transition>{{scope.row.activity_type? '是':'否'}}</el-tag>
@@ -46,8 +46,8 @@
       fixed="right"
       label="操作"
       width="100">
-      <template :scope="scope">
-        <el-button type="text" size="small" click=" handleClick(scope.row)">编辑</el-button>
+      <template slot-scope="scope">
+        <el-button type="text" size="small" @click="handleClick(scope.row)">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     handleClick (row) {
-      console.log(row)
+      console.log(row.activity_id)
     },
     getActivity () {
       this.http.get(this.ports.getActivity).then((res) => {

@@ -27,7 +27,7 @@
       </el-form-item>
     </el-form>
     <el-table
-      :data="tableData"
+      :data="members"
       style="width: 100%">
       <el-table-column
         prop="name"
@@ -61,7 +61,6 @@
       <el-table-column
         prop="date"
         label="注册时间"
-      >
         width="160"
       >
       </el-table-column>
@@ -93,7 +92,7 @@
 export default {
   name: 'manager',
   created () {
-    // this.getMember()
+    this.getMember()
   },
   data () {
     return {

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-// import util from '../util/util'
+import util from '../util/util'
 import doCookie from '../util/cookie'
 export default {
   name: 'login',
