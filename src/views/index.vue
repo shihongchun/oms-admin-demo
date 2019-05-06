@@ -79,7 +79,8 @@ export default {
   },
   methods: {
     moment (newDate) {
-      let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate()).toString()
+      let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate() < 10 ? ('0' + (newDate.getDate()).toString()) : newDate.getDate().toString())
+      // let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate()).toString()
       return date
     },
     drawLineA () {

@@ -50,6 +50,7 @@ export default {
               newData[newDate][item.source] = item.count
             }
           })
+          console.log(JSON.stringify(newData))
         }
         for (let i in this.chartData) {
           for (let j in newData) {
@@ -67,7 +68,7 @@ export default {
   },
   methods: {
     moment (newDate) {
-      let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate()).toString()
+      let date = newDate.getFullYear().toString() + (newDate.getMonth() + 1 < 10 ? ('0' + (newDate.getMonth() + 1).toString()) : newDate.getMonth()).toString() + (newDate.getDate() < 10 ? ('0' + (newDate.getDate()).toString()) : newDate.getDate().toString())
       return date
     },
     drawLine () {

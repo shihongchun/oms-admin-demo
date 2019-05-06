@@ -51,6 +51,26 @@
       </template>
     </el-table-column>
   </el-table>
+  <el-dialog title="编辑活动" :visible.sync="dialogFormVisible">
+    <el-form :model="form" status-icon  ref="form" label-width="100px" class="demo-ruleForm">
+      <el-form-item label="活动名称">
+        <el-input :value="form.activity_name" class="small" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="活动开启状态">
+        <el-switch
+          v-model="form.activity_type"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-value=1
+          inactive-value=0>
+        </el-switch>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="submitForm">提交</el-button>
+    </div>
+  </el-dialog>
 </div>
 </template>
 <script>
@@ -61,7 +81,9 @@ export default {
   },
   methods: {
     handleClick (row) {
-      console.log(row.activity_id)
+      this.dialogFormVisible = true
+      this.form = row
+      console.log(row)
     },
     getActivity () {
       this.http.get(this.ports.getActivity).then((res) => {
@@ -69,10 +91,15 @@ export default {
           this.table = res.data.data
         }
       })
+    },
+    submitForm () {
+      this.dialogFormVisible = false
     }
   },
   data () {
     return {
+      dialogFormVisible: false,
+      form: {},
       table: [{'activity_name': '猜猜看',
         'issuer_id': 1,
         'max_number': 100,

@@ -116,23 +116,36 @@ app.get('/api/getreacent', (req, res) => {
 app.post('/api/member', (req, res) => {
   console.log(req.body)
   const body = req.body
-  let sql = 'Select DATE_FORMAT(add_time,"%Y-%m-%d") as date,name,tel,sex,age,type,source,address from member where '
+  let num = 0
+  let sql = 'Select DATE_FORMAT(add_time,"%Y-%m-%d") as date,name,tel,sex,age,type,source,address from member where'
   let params = []
+  var ser = ''
   for (let i in body) {
-    if (body[i] !== '') {
-      sql += `${i}=?and `
+    if (body[i] !== '' && i !== 'page') {
+      ser += ` ${i}=?and `
       params.push(body[i])
     }
   }
+  sql = sql + ser
   if (sql.slice(-6) === ' where') {
     sql = 'Select DATE_FORMAT(add_time,"%Y-%m-%d") as date,name,tel,sex,age,type,source,address from member'
   } else {
     sql = sql.slice(0, -4)
   }
-
-  console.log(sql)
-  console.log(params)
-
+  sql = sql + ` limit ${(body['page'] - 1) * 10},10`
+  var sqlA = 'select count(*) as num from member where'
+  sqlA = sqlA + ser
+  if (sqlA.slice(-6) === ' where') {
+    sqlA = 'select count(*) as num from member'
+  } else {
+    sqlA = sql.slice(0, -4)
+  }
+  connection.query(sqlA, function (err, result) {
+    if (err) {
+      return
+    }
+    num = result[0].num
+  })
   connection.query(sql, params, function (err, result) {
     if (err) {
       console.log(err)
@@ -143,7 +156,8 @@ app.post('/api/member', (req, res) => {
     }
     res.send({
       'status': 1,
-      data: result
+      data: result,
+      page: num
     })
   })
 })

@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 40px 30px 0;max-height: 500px;overflow-y: scroll;">
+  <div style="margin: 40px 30px 0;">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="姓名">
         <el-input v-model="formInline.name" placeholder="会员姓名"></el-input>
@@ -23,11 +23,12 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getMember">查询</el-button>
+        <el-button type="primary" @click="getMember(1)">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
       :data="members"
+      height="460"
       style="width: 100%">
       <el-table-column
         prop="name"
@@ -85,6 +86,11 @@
         label="来源">
       </el-table-column>
     </el-table>
+    <el-pagination
+      @current-change="pageChange"
+      layout="prev, pager, next"
+      :total="page">
+    </el-pagination>
   </div>
 </template>
 
@@ -92,12 +98,13 @@
 export default {
   name: 'manager',
   created () {
-    this.getMember()
+    this.getMember(1)
   },
   data () {
     return {
       // carTypeData: ['认证车主', '实名车主', '意向车主', '基础会员'],
       // carBrandData: ['小型车', 'SUV', '大型车', '跑车'],
+      page: 0,
       memberType: ['认证会员', '实名会员', '意向会员', '基础会员'],
       formInline: {
         name: '',
@@ -193,15 +200,21 @@ export default {
     onSubmit () {
       console.log('submit!')
     },
-    getMember () {
+    pageChange (e) {
+      this.getMember(e)
+      console.log(e)
+    },
+    getMember (num) {
       this.http.post(this.ports.getMember, {
         name: this.formInline.name,
         tel: this.formInline.tel,
         sex: this.formInline.sex,
-        type: this.formInline.type
+        type: this.formInline.type,
+        page: num
       }).then(res => {
         console.log(res)
         this.members = res.data.data
+        this.page = res.data.page
       })
     }
   }

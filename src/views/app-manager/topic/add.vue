@@ -57,6 +57,15 @@ export default {
         date: '',
         activity_kind: '',
         activity_des: ''
+      },
+      aForm: {
+        activity_name: '',
+        issuer_name: '',
+        max_number: '',
+        activity_range: [],
+        date: '',
+        activity_kind: '',
+        activity_des: ''
       }
     }
   },
@@ -79,6 +88,8 @@ export default {
                 message: '恭喜你，添加成功',
                 type: 'success'
               })
+              t.form = t.aForm
+              t.$router.push('/statistics')
             }
           })
         } else {
