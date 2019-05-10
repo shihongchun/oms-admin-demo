@@ -61,8 +61,8 @@
           v-model="form.activity_type"
           active-color="#13ce66"
           inactive-color="#ff4949"
-          active-value=1
-          inactive-value=0>
+          active-value='1'
+          inactive-value='0'>
         </el-switch>
       </el-form-item>
     </el-form>
@@ -93,6 +93,7 @@ export default {
       })
     },
     submitForm () {
+      console.log(typeof this.form.activity_type)
       this.dialogFormVisible = false
     }
   },

@@ -89,7 +89,7 @@ export default {
                 type: 'success'
               })
               t.form = t.aForm
-              t.$router.push('/statistics')
+              t.$router.push('/Statistics')
             }
           })
         } else {

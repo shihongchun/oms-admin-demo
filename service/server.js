@@ -208,7 +208,6 @@ app.post('/api/adduser', (req, res) => {
   })
 })
 app.post('/api/edituser', (req, res) => {
-  console.log(req.body)
   const params = Object.values(req.body)
   console.log(params)
   connection.query('update user set account=?,password=?,type=? where id=?', params, function (err, result) {
